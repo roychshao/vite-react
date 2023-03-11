@@ -1,5 +1,6 @@
 import { Formik, Form, useField, ErrorMessage } from 'formik'
 import { Link } from 'react-router-dom'
+import bcrypt from 'bcryptjs'
 import * as yup from 'yup'
 import { MdReportGmailerrorred } from 'react-icons/md'
 import { createUseStyles } from 'react-jss'
@@ -108,6 +109,8 @@ const Register = () => {
                 }}
                     onSubmit={ async (value) => {
                         try {
+                            const saltRounds = 10;
+                            value.password = bcrypt.hashSync(value.password, saltRounds);
                             const docRef = await addDoc(collection(db, "Users"), value);
                             console.log("Document written with ID: ", docRef.id);
                             navigate('/');

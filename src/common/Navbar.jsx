@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { loggedout } from './../actions/loginAction.js'
+import { loggedout, loggedoutwithgoogle } from './../actions/loginAction.js'
 import { useState } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { RiShoppingCart2Line } from 'react-icons/ri'
 import { GiBeerStein } from 'react-icons/gi'
 import { createUseStyles } from 'react-jss';
+import { getAuth, signOut } from 'firebase/auth'
 
 
 const Navbar = () => {
 
     const dispatcher = useDispatch();
     const isLogin = useSelector(state => state.loginReducer.isLogin);
+    const loginWithGoogle = useSelector(state => state.loginReducer.loginWithGoogle);
 
     const useStyles = createUseStyles({
         NavbarBody: {
@@ -84,6 +86,7 @@ const Navbar = () => {
     });
     
     const classes = useStyles();
+    const navigate = useNavigate();
 
     const BtnField = () => {
         if(isLogin) {
@@ -91,8 +94,21 @@ const Navbar = () => {
                 <div className={classes.RightField}>
                     <RiShoppingCart2Line className={classes.ShoppingSVG} size="1.5rem" color="#FFFFFF"/>
                     <p className={classes.AccountText} onClick={() => {
-                        dispatcher(loggedout());
-                        navigate('/');
+                        if(loginWithGoogle) {
+                            dispatcher(loggedoutwithgoogle());
+                            const auth = getAuth();
+                            signOut(auth).then(() => {
+                                console.log('successfully logout from google');
+                                navigate('/');
+                            }).catch((error) => {
+                                console.log('something wrong happend when google logout');
+                                console.log(error.message);
+                            })
+                        }
+                        else {
+                            dispatcher(loggedout());
+                            navigate('/');
+                        }
                     }}>Logout</p>
                 </div>
             )

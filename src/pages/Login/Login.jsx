@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux'
+import bcrypt from 'bcryptjs'
 import { loggedin, loggedout } from './../../actions/loginAction.js'
 import { Formik, Form, useField, ErrorMessage } from 'formik'
 import * as yup from 'yup'
@@ -8,6 +9,7 @@ import { createUseStyles } from 'react-jss'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../../common/Navbar.jsx'
 import AlertBox from './AlertBox.jsx'
+import GoogleLogin from './GoogleLogin.jsx'
 
 // firebase SDK
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -116,7 +118,7 @@ const Login = () => {
                             const userDoc = userDocsSnapshot.docs[0];
                             const password = userDoc.data().password;
 
-                            if(password === value.password) {
+                            if(bcrypt.compareSync(value.password, password)) {
                                 console.log("Authentication passed.");
                                 dispatcher(loggedin());
                                 navigate('/');
@@ -132,6 +134,8 @@ const Login = () => {
                         <InputField type="text" placeholder="Email" name="email" />
                         <InputField type="password" placeholder="Password" name="password" />
                         <button className={classes.SubmitBtn} type="submit">login</button>
+                        <p>or</p>
+                        <GoogleLogin/>
                     </Form>
                 </Formik>
                 {showAlert && (
