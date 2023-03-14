@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { auth, provide } from '../../firebase.js'
-import { signInWithPopup } from 'firebase/auth'
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth'
 import { useDispatch } from 'react-redux'
 import { loggedinwithgoogle } from './../../actions/loginAction.js'
 import { FcGoogle } from 'react-icons/fc'
@@ -36,13 +37,39 @@ const GoogleLogin = () => {
 
     const classes = useStyles();
 
+    const [onLogin, setOnLogin] = useState(false);
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const loginUser = await getRedirectResult(auth)
+                console.log(loginUser);
+                if(loginUser) {
+                    dispatcher(loggedinwithgoogle());
+                    navigate('/');
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getData();
+        setOnLogin(false);
+    }, [onLogin])
+
     const googleLogin = async () => {
+        signInWithRedirect(auth, provide);
+        setOnLogin(true);
+
+        // below is the way how to signin with popup
+        /*
         const result = await signInWithPopup(auth, provide);
+        
         if(result) {
             console.log(result);
             dispatcher(loggedinwithgoogle());
             navigate('/');
         }
+        */
     }
 
     return (

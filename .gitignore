@@ -1,4 +1,8 @@
 src/firebase.js
+.firebase/
+.firebaserc
+deploy
+firebase.json
 
 # Logs
 logs
