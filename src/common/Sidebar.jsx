@@ -8,6 +8,13 @@ const Sidebar = () => {
     const classes = useStyles();
 
     return (
-        <div></div>
+        <div>
+            <div><a>ABOUT</a></div>
+            <div><a>PRODUCT</a></div> 
+            <div><a>COMPANY</a></div>
+            <div><a>CONTACT</a></div>
+            <div><a>MORE</a></div>
+            <BtnField/>
+        </div>
     )
 }
